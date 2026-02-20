@@ -11,7 +11,7 @@ fn test_single_hop_delegation() {
     assert_eq!(task.state, TaskState::Pending);
 
     // Create agents
-    let agent_a = Agent::new("delegator-a");
+    let _agent_a = Agent::new("delegator-a");
     let mut agent_b = Agent::new("delegatee-b");
     agent_b.capabilities.capabilities.push(Capability {
         name: "translation".into(),

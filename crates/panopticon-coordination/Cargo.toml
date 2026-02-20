@@ -1,0 +1,26 @@
+[package]
+name = "panopticon-coordination"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+panopticon-types = { workspace = true }
+panopticon-decomposition = { workspace = true }
+panopticon-assignment = { workspace = true }
+panopticon-monitoring = { workspace = true }
+panopticon-verification = { workspace = true }
+panopticon-permissions = { workspace = true }
+panopticon-security = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }

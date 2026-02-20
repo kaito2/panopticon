@@ -1,0 +1,33 @@
+[package]
+name = "panopticon-server"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+panopticon-types = { workspace = true }
+panopticon-ledger = { workspace = true }
+panopticon-coordination = { workspace = true }
+panopticon-decomposition = { workspace = true }
+panopticon-assignment = { workspace = true }
+panopticon-monitoring = { workspace = true }
+panopticon-verification = { workspace = true }
+panopticon-reputation = { workspace = true }
+panopticon-optimizer = { workspace = true }
+panopticon-security = { workspace = true }
+panopticon-permissions = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+axum = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+dashmap = { workspace = true }
+anyhow = { workspace = true }

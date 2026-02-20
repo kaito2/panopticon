@@ -1,0 +1,77 @@
+[workspace]
+members = [
+    "crates/panopticon-types",
+    "crates/panopticon-ledger",
+    "crates/panopticon-decomposition",
+    "crates/panopticon-reputation",
+    "crates/panopticon-assignment",
+    "crates/panopticon-optimizer",
+    "crates/panopticon-monitoring",
+    "crates/panopticon-coordination",
+    "crates/panopticon-verification",
+    "crates/panopticon-security",
+    "crates/panopticon-permissions",
+    "crates/panopticon-server",
+]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.85"
+license = "MIT"
+repository = "https://github.com/kaito2/panopticon"
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# IDs and time
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Web framework
+axum = { version = "0.8", features = ["ws"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+
+# Async traits
+async-trait = "0.1"
+
+# Concurrent data structures
+dashmap = "6"
+
+# Cryptography
+sha2 = "0.10"
+rs_merkle = "1"
+ed25519-dalek = { version = "2", features = ["serde"] }
+rand = "0.8"
+
+# Testing
+proptest = "1"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+# Workspace crates
+panopticon-types = { path = "crates/panopticon-types" }
+panopticon-ledger = { path = "crates/panopticon-ledger" }
+panopticon-decomposition = { path = "crates/panopticon-decomposition" }
+panopticon-reputation = { path = "crates/panopticon-reputation" }
+panopticon-assignment = { path = "crates/panopticon-assignment" }
+panopticon-optimizer = { path = "crates/panopticon-optimizer" }
+panopticon-monitoring = { path = "crates/panopticon-monitoring" }
+panopticon-coordination = { path = "crates/panopticon-coordination" }
+panopticon-verification = { path = "crates/panopticon-verification" }
+panopticon-security = { path = "crates/panopticon-security" }
+panopticon-permissions = { path = "crates/panopticon-permissions" }
+panopticon-server = { path = "crates/panopticon-server" }

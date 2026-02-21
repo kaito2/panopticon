@@ -47,7 +47,10 @@ fn main() {
         behavioral: 0.8,
     };
     println!("\nRegistered agent: {} (id: {})", analyst.name, analyst.id);
-    println!("  Reputation composite: {:.3}", analyst.reputation.composite());
+    println!(
+        "  Reputation composite: {:.3}",
+        analyst.reputation.composite()
+    );
 
     // Walk through delegation lifecycle
     println!("\n--- Delegation Lifecycle ---");

@@ -1,20 +1,19 @@
 use std::sync::Arc;
 
-use panopticon_ledger::{InMemoryLedger, Ledger};
-use panopticon_reputation::ReputationEngine;
-
 use dashmap::DashMap;
 use uuid::Uuid;
 
+use panopticon_ledger::{InMemoryLedger, Ledger};
+use panopticon_reputation::ReputationEngine;
 use panopticon_types::{Agent, Task};
 
-#[derive(Clone)]
+/// Shared application state for CLI commands.
 #[allow(dead_code)]
 pub struct AppState {
     pub ledger: Arc<dyn Ledger>,
     pub reputation_engine: Arc<ReputationEngine>,
-    pub tasks: Arc<DashMap<Uuid, Task>>,
-    pub agents: Arc<DashMap<Uuid, Agent>>,
+    pub tasks: DashMap<Uuid, Task>,
+    pub agents: DashMap<Uuid, Agent>,
 }
 
 impl AppState {
@@ -25,8 +24,8 @@ impl AppState {
         Self {
             ledger,
             reputation_engine,
-            tasks: Arc::new(DashMap::new()),
-            agents: Arc::new(DashMap::new()),
+            tasks: DashMap::new(),
+            agents: DashMap::new(),
         }
     }
 }

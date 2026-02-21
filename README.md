@@ -17,7 +17,7 @@ Panopticon implements the five pillars of the paper:
 ## Architecture
 
 ```
-panopticon-server         HTTP API (Axum)
+panopticon-cli            CLI interface (clap)
   |
   +-- panopticon-coordination    Event-driven coordination loop
   |     +-- panopticon-decomposition   Task decomposition (Sequential / Parallel / Hybrid)
@@ -48,7 +48,7 @@ panopticon-server         HTTP API (Axum)
 | `panopticon-verification` | 4 verifiers (Direct Inspection, Third-Party Audit, Cryptographic stub, Game-Theoretic), ed25519 credentials, dispute state machine |
 | `panopticon-security` | Sybil / Collusion / Behavioral threat detectors, circuit breaker with token revocation |
 | `panopticon-permissions` | Criticality x reversibility approval matrix (Standing / Contextual / JIT), privilege attenuation for re-delegation chains |
-| `panopticon-server` | Axum HTTP API for tasks, agents, reputation, and state transitions |
+| `panopticon-cli` | CLI interface for tasks, agents, reputation, and state transitions |
 
 ## Requirements
 
@@ -67,25 +67,53 @@ cargo test --workspace
 cargo clippy --workspace -- -D warnings
 
 # Run the example
-cargo run -p panopticon-server --example basic_delegation
+cargo run -p panopticon-cli --example basic_delegation
 
-# Start the API server
-cargo run -p panopticon-server
+# Run full delegation lifecycle demo
+cargo run -p panopticon-cli -- demo
 ```
 
-## API Endpoints
+## CLI Usage
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/health` | Health check |
-| `POST` | `/api/v1/tasks` | Create a task |
-| `GET` | `/api/v1/tasks` | List all tasks |
-| `GET` | `/api/v1/tasks/{id}` | Get a task |
-| `POST` | `/api/v1/tasks/{id}/transition` | Apply a state transition event |
-| `POST` | `/api/v1/agents` | Register an agent |
-| `GET` | `/api/v1/agents` | List all agents |
-| `GET` | `/api/v1/agents/{id}` | Get an agent |
-| `GET` | `/api/v1/agents/{id}/reputation` | Get reputation score and trust level |
+```bash
+# Binary name
+panopticon <command>
+
+# Or via cargo
+cargo run -p panopticon-cli -- <command>
+```
+
+### Commands
+
+| Command | Description |
+|---|---|
+| `demo` | Run a full delegation lifecycle demo |
+| `task create` | Create a task with characteristics |
+| `task list` | List all tasks |
+| `task get <ID>` | Get task details |
+| `task transition <ID> <EVENT>` | Apply a state transition event |
+| `task decompose <ID> --strategy <NAME>` | Decompose a task (sequential, parallel, hybrid) |
+| `agent register <NAME>` | Register an agent |
+| `agent list` | List all agents |
+| `agent get <ID>` | Get agent details |
+| `agent reputation <ID>` | Get reputation score and trust level |
+
+### Examples
+
+```bash
+# Run the demo (recommended first step)
+panopticon demo
+
+# Create a task
+panopticon task create "Analyze data" "Process market data" \
+  --complexity 0.7 --criticality 0.6
+
+# Register an agent with capabilities
+panopticon agent register analyst --capabilities "data_analysis,market_research"
+
+# Decompose a task
+panopticon task decompose <TASK_ID> --strategy hybrid
+```
 
 ## Task State Machine
 

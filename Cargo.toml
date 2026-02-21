@@ -11,7 +11,7 @@ members = [
     "crates/panopticon-verification",
     "crates/panopticon-security",
     "crates/panopticon-permissions",
-    "crates/panopticon-server",
+    "crates/panopticon-cli",
 ]
 resolver = "3"
 
@@ -41,10 +41,8 @@ chrono = { version = "0.4", features = ["serde"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
-# Web framework
-axum = { version = "0.8", features = ["ws"] }
-tower = "0.5"
-tower-http = { version = "0.6", features = ["cors", "trace"] }
+# CLI
+clap = { version = "4", features = ["derive"] }
 
 # Async traits
 async-trait = "0.1"
@@ -74,4 +72,4 @@ panopticon-coordination = { path = "crates/panopticon-coordination" }
 panopticon-verification = { path = "crates/panopticon-verification" }
 panopticon-security = { path = "crates/panopticon-security" }
 panopticon-permissions = { path = "crates/panopticon-permissions" }
-panopticon-server = { path = "crates/panopticon-server" }
+panopticon-cli = { path = "crates/panopticon-cli" }

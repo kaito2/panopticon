@@ -1,5 +1,5 @@
 [package]
-name = "panopticon"
+name = "panopticon-ai"
 version = "0.1.0"
 description = "Panopticon — intelligent AI delegation framework"
 edition = "2024"

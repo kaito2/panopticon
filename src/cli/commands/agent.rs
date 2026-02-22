@@ -1,6 +1,6 @@
-use anyhow::{Result, bail};
 use crate::reputation::ReputationEngine;
 use crate::types::{Agent, Capability};
+use anyhow::{Result, bail};
 
 use crate::cli::AgentAction;
 use crate::cli::state::AppState;

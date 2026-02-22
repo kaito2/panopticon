@@ -1,6 +1,6 @@
-use anyhow::Result;
 use crate::decomposition::{HybridStrategy, traits::DecompositionStrategy};
 use crate::types::*;
+use anyhow::Result;
 
 use crate::cli::state::AppState;
 

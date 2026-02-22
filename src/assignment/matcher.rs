@@ -90,8 +90,8 @@ impl CapabilityMatcher {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::Utc;
     use crate::types::{Capability, CapabilityRegistry, ReputationScore};
+    use chrono::Utc;
 
     fn make_agent(name: &str, caps: &[(&str, f64)], reputation: f64, available: bool) -> Agent {
         let mut agent = Agent::new(name);

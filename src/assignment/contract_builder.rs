@@ -1,5 +1,5 @@
-use chrono::{DateTime, Utc};
 use crate::types::{DelegationContract, DisputeResolutionTerms, MonitoringTerms, PaymentTerms};
+use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 /// Errors specific to contract building.

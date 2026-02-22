@@ -117,9 +117,9 @@ impl ReputationEngine {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ledger::{LedgerEntry, LedgerEntryKind};
     use crate::reputation::score::ReputationDimension;
     use chrono::Utc;
-    use crate::ledger::{LedgerEntry, LedgerEntryKind};
     use std::sync::Mutex;
 
     /// A trivial in-memory ledger for testing (no feature gate needed).

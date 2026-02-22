@@ -175,10 +175,10 @@ impl MonitoringLoop {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::monitoring::slo::{Comparison, SloDefinition};
-    use async_trait::async_trait;
     use crate::ledger::LedgerEntry;
+    use crate::monitoring::slo::{Comparison, SloDefinition};
     use crate::types::PanopticonError;
+    use async_trait::async_trait;
     use std::sync::Mutex;
 
     /// In-memory ledger for testing.

@@ -1,5 +1,5 @@
-use async_trait::async_trait;
 use crate::types::{PanopticonError, Task};
+use async_trait::async_trait;
 
 use super::proposal::DecompositionProposal;
 

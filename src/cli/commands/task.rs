@@ -1,8 +1,8 @@
-use anyhow::{Result, bail};
 use crate::decomposition::{
     HybridStrategy, ParallelStrategy, SequentialStrategy, traits::DecompositionStrategy,
 };
 use crate::types::{Task, TaskCharacteristics, TaskEvent};
+use anyhow::{Result, bail};
 
 use crate::cli::TaskAction;
 use crate::cli::state::AppState;

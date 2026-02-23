@@ -26,31 +26,34 @@ pub async fn handle(goal: &str, model: &str, state: &AppState) -> Result<()> {
     // Create a planning meta-task.
     let planning_task = Task::new(
         "Plan decomposition",
-        format!(
-            "You are a task planning assistant. Given a goal, decompose it into concrete subtasks.\n\n\
-             Goal: {goal}\n\n\
-             Respond with a JSON object with this exact structure:\n\
-             {{\n  \
-               \"subtasks\": [\n    \
-                 {{\n      \
-                   \"name\": \"short task name\",\n      \
-                   \"description\": \"detailed description of what to do\",\n      \
-                   \"complexity\": 0.5,\n      \
-                   \"criticality\": 0.5,\n      \
-                   \"verifiability\": 0.5,\n      \
-                   \"reversibility\": 0.5,\n      \
-                   \"capabilities\": [\"cap1\", \"cap2\"]\n    \
-                 }}\n  \
-               ],\n  \
-               \"dependencies\": [[0, 1], [1, 2]]\n\
-             }}\n\n\
-             The dependencies array contains [from_index, to_index] pairs meaning \
-             subtask at from_index must complete before subtask at to_index can start.\n\
-             Keep the number of subtasks between 2 and 8."
-        ),
+        format!("Goal: {goal}"),
     );
 
-    let ctx = ExecutionContext::default();
+    let system_prompt = "\
+        You are a task planning assistant. Given a goal, decompose it into concrete subtasks.\n\n\
+        Respond with ONLY a JSON object (no markdown, no code fences, no explanation) with this exact structure:\n\
+        {\n  \
+          \"subtasks\": [\n    \
+            {\n      \
+              \"name\": \"short task name\",\n      \
+              \"description\": \"detailed description of what to do\",\n      \
+              \"complexity\": 0.5,\n      \
+              \"criticality\": 0.5,\n      \
+              \"verifiability\": 0.5,\n      \
+              \"reversibility\": 0.5,\n      \
+              \"capabilities\": [\"cap1\", \"cap2\"]\n    \
+            }\n  \
+          ],\n  \
+          \"dependencies\": [[0, 1], [1, 2]]\n\
+        }\n\n\
+        The dependencies array contains [from_index, to_index] pairs meaning \
+        subtask at from_index must complete before subtask at to_index can start.\n\
+        Keep the number of subtasks between 2 and 8.";
+
+    let ctx = ExecutionContext {
+        system_prompt: Some(system_prompt.to_string()),
+        ..Default::default()
+    };
     let result = executor
         .execute(&planning_task, &ctx)
         .await

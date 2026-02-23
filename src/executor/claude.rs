@@ -56,11 +56,14 @@ impl ClaudeExecutor {
             ));
         }
 
-        prompt.push_str(
-            "Respond with a JSON object containing your result. \
-             The object should have at minimum a \"result\" key with your output \
-             and a \"summary\" key with a brief summary.",
-        );
+        // Only add generic JSON instructions when no system prompt provides its own format.
+        if context.system_prompt.is_none() {
+            prompt.push_str(
+                "Respond with a JSON object containing your result. \
+                 The object should have at minimum a \"result\" key with your output \
+                 and a \"summary\" key with a brief summary.",
+            );
+        }
 
         prompt
     }
@@ -141,8 +144,11 @@ impl AgentExecutor for ClaudeExecutor {
             .and_then(|v| v.as_str())
             .unwrap_or_else(|| stdout.as_ref());
 
+        // Strip markdown code fences (```json ... ``` or ``` ... ```) if present.
+        let cleaned = strip_code_fences(result_text);
+
         // Try to parse the result text as JSON; if it fails, wrap it as a string value.
-        let output_value: serde_json::Value = serde_json::from_str(result_text)
+        let output_value: serde_json::Value = serde_json::from_str(&cleaned)
             .unwrap_or_else(|_| serde_json::json!({ "result": result_text, "summary": "" }));
 
         Ok(TaskResult {
@@ -171,19 +177,50 @@ impl AgentExecutor for ClaudeExecutor {
     }
 }
 
+/// Strip markdown code fences from a string.
+/// Handles ```json\n...\n```, ```\n...\n```, and bare JSON.
+fn strip_code_fences(s: &str) -> String {
+    let trimmed = s.trim();
+    if let Some(rest) = trimmed.strip_prefix("```") {
+        // Skip optional language tag on the first line.
+        let rest = if let Some(after_newline) = rest.find('\n') {
+            &rest[after_newline + 1..]
+        } else {
+            rest
+        };
+        // Strip trailing ```
+        let rest = rest.strip_suffix("```").unwrap_or(rest);
+        rest.trim().to_string()
+    } else {
+        trimmed.to_string()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::executor::ExecutionContext;
 
     #[test]
-    fn test_build_prompt() {
+    fn test_build_prompt_default() {
         let task = Task::new("Test task", "Do something useful");
         let ctx = ExecutionContext::default();
         let prompt = ClaudeExecutor::build_prompt(&task, &ctx);
         assert!(prompt.contains("Test task"));
         assert!(prompt.contains("Do something useful"));
         assert!(prompt.contains("JSON object"));
+    }
+
+    #[test]
+    fn test_build_prompt_with_system_prompt_skips_generic_json() {
+        let task = Task::new("Test task", "Do something useful");
+        let ctx = ExecutionContext {
+            system_prompt: Some("Custom instructions here".to_string()),
+            ..Default::default()
+        };
+        let prompt = ClaudeExecutor::build_prompt(&task, &ctx);
+        assert!(prompt.contains("Custom instructions here"));
+        assert!(!prompt.contains("JSON object"));
     }
 
     #[test]
@@ -194,5 +231,23 @@ mod tests {
         assert!(args.contains(&"--output-format".to_string()));
         assert!(args.contains(&"json".to_string()));
         assert!(args.contains(&"-p".to_string()));
+    }
+
+    #[test]
+    fn test_strip_code_fences_json() {
+        let input = "```json\n{\"key\": \"value\"}\n```";
+        assert_eq!(strip_code_fences(input), "{\"key\": \"value\"}");
+    }
+
+    #[test]
+    fn test_strip_code_fences_bare() {
+        let input = "```\n{\"key\": \"value\"}\n```";
+        assert_eq!(strip_code_fences(input), "{\"key\": \"value\"}");
+    }
+
+    #[test]
+    fn test_strip_code_fences_none() {
+        let input = "{\"key\": \"value\"}";
+        assert_eq!(strip_code_fences(input), "{\"key\": \"value\"}");
     }
 }

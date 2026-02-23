@@ -21,6 +21,24 @@ Panopticon implements the five pillars of the paper:
 4. **Scalable Market Coordination** -- RFP/bid protocol with Pareto-optimal multi-objective selection (cost, quality, latency, uncertainty, privacy risk).
 5. **System Resilience** -- Circuit breakers, threat detection (Sybil, collusion, behavioral anomalies), and privilege attenuation on re-delegation.
 
+## Quick Start
+
+```bash
+# Install from crates.io
+cargo install panopticon-ai
+
+# Run full delegation lifecycle demo
+panopticon demo
+```
+
+### Build from source
+
+```bash
+cargo build
+cargo test
+cargo clippy -- -D warnings
+```
+
 ## Architecture
 
 ```
@@ -60,22 +78,6 @@ panopticon-ai (single crate)
 ## Requirements
 
 - Rust 1.85+ (Edition 2024)
-
-## Quick Start
-
-```bash
-# Build
-cargo build
-
-# Run tests
-cargo test
-
-# Run clippy
-cargo clippy -- -D warnings
-
-# Run full delegation lifecycle demo
-cargo run -- demo
-```
 
 ## CLI Usage
 

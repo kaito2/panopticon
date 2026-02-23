@@ -109,7 +109,7 @@ impl AgentExecutor for ClaudeExecutor {
         let mut cmd = tokio::process::Command::new("claude");
         cmd.args(&args)
             .stdout(std::process::Stdio::piped())
-            .stderr(std::process::Stdio::piped());
+            .stderr(std::process::Stdio::inherit());
 
         if let Some(dir) = &context.working_dir {
             cmd.current_dir(dir);
@@ -121,10 +121,9 @@ impl AgentExecutor for ClaudeExecutor {
             .map_err(|e| PanopticonError::Internal(format!("Failed to spawn claude CLI: {e}")))?;
 
         if !output.status.success() {
-            let stderr = String::from_utf8_lossy(&output.stderr);
             return Err(PanopticonError::Internal(format!(
-                "claude CLI exited with {}: {}",
-                output.status, stderr
+                "claude CLI exited with {}",
+                output.status,
             )));
         }
 

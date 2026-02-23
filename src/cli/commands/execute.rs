@@ -1,5 +1,6 @@
 use anyhow::{Result, bail};
 use chrono::Utc;
+use std::io::Write;
 use uuid::Uuid;
 
 use crate::cli::state::AppState;
@@ -228,6 +229,7 @@ async fn execute_single_task(
     let ctx = ExecutionContext::default();
 
     print!("  Running...");
+    let _ = std::io::stdout().flush();
     let start = std::time::Instant::now();
     let exec_result = executor.execute(&task, &ctx).await;
     let elapsed = start.elapsed();

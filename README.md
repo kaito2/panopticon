@@ -10,6 +10,7 @@ Based on [Intelligent AI Delegation](https://arxiv.org/abs/2602.11865) (Tomasev,
 
 [![Crates.io](https://img.shields.io/crates/v/panopticon-ai)](https://crates.io/crates/panopticon-ai)
 [![CI](https://github.com/kaito2/panopticon/actions/workflows/ci.yml/badge.svg)](https://github.com/kaito2/panopticon/actions/workflows/ci.yml)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kaito2/panopticon)
 
 ## Overview
 

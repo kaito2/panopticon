@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/images/hero.jpg" alt="Panopticon" width="800">
+</p>
+
 # Panopticon
 
 Intelligent AI Delegation Framework -- an adaptive framework for dynamic and safe task delegation between AI agents.

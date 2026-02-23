@@ -31,6 +31,36 @@ cargo install panopticon-ai
 panopticon demo
 ```
 
+### Create a task and register an agent
+
+```bash
+# Create a task with characteristics
+panopticon task create --name "Analyze data" --description "Process market data" \
+  --complexity 0.7 --criticality 0.6
+
+# List tasks and get the task ID
+panopticon task list
+
+# Register an agent with capabilities
+panopticon agent register --name analyst --capabilities "data_analysis,market_research"
+
+# Check agent reputation
+panopticon agent reputation <AGENT_ID>
+```
+
+### Decompose and manage tasks
+
+```bash
+# Decompose a task into subtasks (sequential, parallel, or hybrid)
+panopticon task decompose <TASK_ID> --strategy hybrid
+
+# Apply a state transition
+panopticon task transition <TASK_ID> StartNegotiation
+
+# Get task details
+panopticon task get <TASK_ID>
+```
+
 ### Build from source
 
 ```bash

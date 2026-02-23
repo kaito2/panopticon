@@ -4,6 +4,9 @@ Intelligent AI Delegation Framework -- an adaptive framework for dynamic and saf
 
 Based on [Intelligent AI Delegation](https://arxiv.org/abs/2602.11865) (Tomasev, Franklin, Osindero — Google DeepMind, 2026).
 
+[![Crates.io](https://img.shields.io/crates/v/panopticon-ai)](https://crates.io/crates/panopticon-ai)
+[![CI](https://github.com/kaito2/panopticon/actions/workflows/ci.yml/badge.svg)](https://github.com/kaito2/panopticon/actions/workflows/ci.yml)
+
 ## Overview
 
 Panopticon implements the five pillars of the paper:
@@ -17,38 +20,38 @@ Panopticon implements the five pillars of the paper:
 ## Architecture
 
 ```
-panopticon-cli            CLI interface (clap)
+panopticon-ai (single crate)
   |
-  +-- panopticon-coordination    Event-driven coordination loop
-  |     +-- panopticon-decomposition   Task decomposition (Sequential / Parallel / Hybrid)
-  |     +-- panopticon-assignment      Capability matching, RFP/bid, contract building
-  |     +-- panopticon-monitoring      Async monitoring loop, SLO violation detection
-  |     +-- panopticon-verification    4 verification strategies, dispute resolution
-  |     +-- panopticon-permissions     Approval levels, privilege attenuation
-  |     +-- panopticon-security        Threat detection, circuit breakers
-  |
-  +-- panopticon-optimizer       Pareto front computation, multi-objective optimization
-  +-- panopticon-reputation      EMA-based multi-dimensional scoring, trust levels
-  +-- panopticon-ledger          Immutable audit ledger (in-memory / Merkle tree)
-  +-- panopticon-types           Core domain types, state machines, error types
+  +-- cli/             CLI interface (clap)
+  +-- coordination/    Event-driven coordination loop
+  +-- decomposition/   Task decomposition (Sequential / Parallel / Hybrid)
+  +-- assignment/      Capability matching, RFP/bid, contract building
+  +-- monitoring/      Async monitoring loop, SLO violation detection
+  +-- verification/    4 verification strategies, dispute resolution
+  +-- permissions/     Approval levels, privilege attenuation
+  +-- security/        Threat detection, circuit breakers
+  +-- optimizer/       Pareto front computation, multi-objective optimization
+  +-- reputation/      EMA-based multi-dimensional scoring, trust levels
+  +-- ledger/          Immutable audit ledger (in-memory / Merkle tree)
+  +-- types/           Core domain types, state machines, error types
 ```
 
-### Crates
+### Modules
 
-| Crate | Description |
+| Module | Description |
 |---|---|
-| `panopticon-types` | Task (11-dim characteristics, state machine), Agent, DelegationContract, DelegationChain, error types |
-| `panopticon-ledger` | `Ledger` trait + `InMemoryLedger` (default) + `MerkleLedger` (feature-gated) |
-| `panopticon-decomposition` | `DecompositionStrategy` trait + Sequential / Parallel / Hybrid implementations, DAG cycle detection |
-| `panopticon-reputation` | EMA-based scoring with adaptive learning rate, weighted composite (completion 0.4, quality 0.3, reliability 0.15, safety 0.1, behavioral 0.05) |
-| `panopticon-assignment` | `CapabilityMatcher`, RFP/Bid protocol, `ContractBuilder` |
-| `panopticon-optimizer` | Multi-objective evaluation, Pareto front computation, delegation overhead estimation |
-| `panopticon-monitoring` | Async monitoring loop (`tokio::select!`), checkpoint management, SLO violation detection |
-| `panopticon-coordination` | Event-driven coordinator mapping triggers (spec change, budget exceeded, agent unresponsive, ...) to responses (re-delegate, escalate, terminate, ...) |
-| `panopticon-verification` | 4 verifiers (Direct Inspection, Third-Party Audit, Cryptographic stub, Game-Theoretic), ed25519 credentials, dispute state machine |
-| `panopticon-security` | Sybil / Collusion / Behavioral threat detectors, circuit breaker with token revocation |
-| `panopticon-permissions` | Criticality x reversibility approval matrix (Standing / Contextual / JIT), privilege attenuation for re-delegation chains |
-| `panopticon-cli` | CLI interface for tasks, agents, reputation, and state transitions |
+| `types` | Task (11-dim characteristics, state machine), Agent, DelegationContract, DelegationChain, error types |
+| `ledger` | `Ledger` trait + `InMemoryLedger` (default) + `MerkleLedger` (feature-gated) |
+| `decomposition` | `DecompositionStrategy` trait + Sequential / Parallel / Hybrid implementations, DAG cycle detection |
+| `reputation` | EMA-based scoring with adaptive learning rate, weighted composite (completion 0.4, quality 0.3, reliability 0.15, safety 0.1, behavioral 0.05) |
+| `assignment` | `CapabilityMatcher`, RFP/Bid protocol, `ContractBuilder` |
+| `optimizer` | Multi-objective evaluation, Pareto front computation, delegation overhead estimation |
+| `monitoring` | Async monitoring loop (`tokio::select!`), checkpoint management, SLO violation detection |
+| `coordination` | Event-driven coordinator mapping triggers (spec change, budget exceeded, agent unresponsive, ...) to responses (re-delegate, escalate, terminate, ...) |
+| `verification` | 4 verifiers (Direct Inspection, Third-Party Audit, Cryptographic stub, Game-Theoretic), ed25519 credentials, dispute state machine |
+| `security` | Sybil / Collusion / Behavioral threat detectors, circuit breaker with token revocation |
+| `permissions` | Criticality x reversibility approval matrix (Standing / Contextual / JIT), privilege attenuation for re-delegation chains |
+| `cli` | CLI interface for tasks, agents, reputation, and state transitions |
 
 ## Requirements
 
@@ -58,19 +61,16 @@ panopticon-cli            CLI interface (clap)
 
 ```bash
 # Build
-cargo build --workspace
+cargo build
 
-# Run tests (142 tests)
-cargo test --workspace
+# Run tests
+cargo test
 
 # Run clippy
-cargo clippy --workspace -- -D warnings
-
-# Run the example
-cargo run -p panopticon-cli --example basic_delegation
+cargo clippy -- -D warnings
 
 # Run full delegation lifecycle demo
-cargo run -p panopticon-cli -- demo
+cargo run -- demo
 ```
 
 ## CLI Usage
@@ -80,7 +80,7 @@ cargo run -p panopticon-cli -- demo
 panopticon <command>
 
 # Or via cargo
-cargo run -p panopticon-cli -- <command>
+cargo run -- <command>
 ```
 
 ### Commands
@@ -137,7 +137,7 @@ Failed <-- AwaitingVerification <-- InProgress
 
 ```bash
 # Enable Merkle ledger
-cargo build -p panopticon-ledger --features merkle-ledger
+cargo build --features merkle-ledger
 ```
 
 ## License

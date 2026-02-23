@@ -98,6 +98,21 @@ impl ReputationEngine {
         self.get_reputation(agent_id).map(|score| score.composite())
     }
 
+    /// Load reputation scores from a persisted map.
+    pub fn load_scores(&self, scores: &std::collections::HashMap<Uuid, super::score::AgentReputation>) {
+        for (id, rep) in scores {
+            self.scores.insert(*id, rep.clone());
+        }
+    }
+
+    /// Dump all reputation scores for persistence.
+    pub fn dump_scores(&self) -> std::collections::HashMap<Uuid, super::score::AgentReputation> {
+        self.scores
+            .iter()
+            .map(|entry| (*entry.key(), entry.value().clone()))
+            .collect()
+    }
+
     /// Map a composite reputation score to a `TrustLevel`.
     pub fn compute_trust_level(composite: f64) -> TrustLevel {
         if composite < 0.2 {

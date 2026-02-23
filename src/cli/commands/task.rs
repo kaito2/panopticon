@@ -2,7 +2,9 @@ use crate::decomposition::{
     HybridStrategy, ParallelStrategy, SequentialStrategy, traits::DecompositionStrategy,
 };
 use crate::types::{Task, TaskCharacteristics, TaskEvent};
+use crate::verification::{TaskResult, Verifier, verifiers::DirectInspectionVerifier};
 use anyhow::{Result, bail};
+use chrono::Utc;
 
 use crate::cli::TaskAction;
 use crate::cli::state::AppState;
@@ -16,6 +18,7 @@ pub async fn handle(action: TaskAction, state: &AppState) -> Result<()> {
             criticality,
             verifiability,
             reversibility,
+            capabilities,
         } => {
             let mut task = Task::new(&name, &description);
             task.characteristics = TaskCharacteristics {
@@ -25,6 +28,14 @@ pub async fn handle(action: TaskAction, state: &AppState) -> Result<()> {
                 reversibility,
                 ..TaskCharacteristics::default()
             };
+
+            if let Some(caps) = capabilities {
+                task.required_capabilities = caps
+                    .split(',')
+                    .map(|s| s.trim().to_string())
+                    .filter(|s| !s.is_empty())
+                    .collect();
+            }
 
             let id = task.id;
             println!("Created task: {} ({})", name, id);
@@ -93,6 +104,44 @@ pub async fn handle(action: TaskAction, state: &AppState) -> Result<()> {
             }
             println!("{} dependencies", proposal.dependencies.len());
         }
+
+        TaskAction::Assign { id, agent } => {
+            // Verify both exist
+            if !state.agents.contains_key(&agent) {
+                bail!("Agent not found: {agent}");
+            }
+            let mut entry = state
+                .tasks
+                .get_mut(&id)
+                .ok_or_else(|| anyhow::anyhow!("Task not found: {id}"))?;
+            entry.assigned_agent_id = Some(agent);
+            println!("Assigned task {} to agent {}", id, agent);
+        }
+
+        TaskAction::Verify { id } => {
+            let task = state
+                .tasks
+                .get(&id)
+                .ok_or_else(|| anyhow::anyhow!("Task not found: {id}"))?
+                .clone();
+
+            let agent_id = task
+                .assigned_agent_id
+                .ok_or_else(|| anyhow::anyhow!("Task has no assigned agent"))?;
+
+            // Build a TaskResult from task metadata
+            let result = TaskResult {
+                task_id: task.id,
+                agent_id,
+                output: task.metadata.clone(),
+                completed_at: Utc::now(),
+                resource_consumed: 0.0,
+            };
+
+            let verifier = DirectInspectionVerifier::new(vec!["result".to_string()]);
+            let outcome = verifier.verify(&task, &result).await.map_err(|e| anyhow::anyhow!("{e}"))?;
+            println!("Verification result: {:?}", outcome);
+        }
     }
     Ok(())
 }
@@ -122,7 +171,7 @@ fn parse_event(s: &str) -> Result<TaskEvent> {
     }
 }
 
-fn print_task(t: &Task) {
+pub fn print_task(t: &Task) {
     println!("  ID:          {}", t.id);
     println!("  Name:        {}", t.name);
     println!("  State:       {:?}", t.state);

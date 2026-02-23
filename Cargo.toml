@@ -35,14 +35,19 @@ chrono = { version = "0.4", features = ["serde"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
-# CLI
-clap = { version = "4", features = ["derive"] }
+# REPL
+rustyline = "15"
+colored = "3"
 
 # Async traits
 async-trait = "0.1"
 
 # Concurrent data structures
 dashmap = "6"
+
+# Persistence
+dirs = "5"
+toml = "0.8"
 
 # Cryptography
 sha2 = "0.10"
@@ -53,3 +58,4 @@ rand = "0.8"
 [dev-dependencies]
 proptest = "1"
 criterion = { version = "0.5", features = ["html_reports"] }
+tempfile = "3"

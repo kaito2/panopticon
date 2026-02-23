@@ -27,39 +27,57 @@ Panopticon implements the five pillars of the paper:
 # Install from crates.io
 cargo install panopticon-ai
 
-# Run full delegation lifecycle demo
-panopticon demo
+# Launch the interactive REPL
+panopticon
 ```
 
-### Create a task and register an agent
+Panopticon starts an interactive REPL session. You can type natural language or use slash commands.
 
-```bash
-# Create a task with characteristics
-panopticon task create --name "Analyze data" --description "Process market data" \
-  --complexity 0.7 --criticality 0.6
+```
+Panopticon — Intelligent AI Delegation Framework
+Type natural language or /help for commands. Ctrl-D to exit.
 
-# List tasks and get the task ID
-panopticon task list
+panopticon [0 tasks, 0 agents]
+> Webサイトのパフォーマンスを分析して
 
-# Register an agent with capabilities
-panopticon agent register --name analyst --capabilities "data_analysis,market_research"
+Planning with Claude (sonnet)...
+Decomposed into 3 subtasks:
+  [1] Lighthouse audit の実行 (complexity=0.4)
+  [2] ボトルネック分析 (complexity=0.6)
+  [3] 改善提案レポート (complexity=0.5)
 
-# Check agent reputation
-panopticon agent reputation <AGENT_ID>
+Proceed? [Y/n] Y
+
+panopticon [4 tasks, 0 agents]
+> /execute --all
+...
+panopticon [4 tasks, 1 agents]
+> /status
+Tasks: 4 total (3 completed, 0 in-progress, 1 pending, 0 failed)
+...
+panopticon [4 tasks, 1 agents]
+> /quit
+State saved. Goodbye.
 ```
 
-### Decompose and manage tasks
+### Slash commands
 
-```bash
-# Decompose a task into subtasks (sequential, parallel, or hybrid)
-panopticon task decompose <TASK_ID> --strategy hybrid
+| Command | Description |
+|---|---|
+| `/plan <goal>` | Decompose a goal into subtasks via Claude |
+| `/execute [id\|--all]` | Execute tasks (by UUID or all pending) |
+| `/status` | Show task/agent dashboard |
+| `/task list` | List all tasks |
+| `/task get <ID>` | Get task details |
+| `/agent list` | List all agents |
+| `/agent reputation <ID>` | Show agent reputation |
+| `/config show` | Show current configuration |
+| `/config init` | Initialize default config file |
+| `/demo` | Run a full delegation lifecycle demo |
+| `/help` | Show available commands |
+| `/quit` | Exit the REPL |
 
-# Apply a state transition
-panopticon task transition <TASK_ID> StartNegotiation
-
-# Get task details
-panopticon task get <TASK_ID>
-```
+Natural language input is routed through Claude (haiku) for intent classification and automatically dispatched to the appropriate command.
 
 ### Build from source
 
@@ -74,7 +92,12 @@ cargo clippy -- -D warnings
 ```
 panopticon-ai (single crate)
   |
-  +-- cli/             CLI interface (clap)
+  +-- repl/            Interactive REPL (rustyline + colored)
+  |     +-- slash        Slash command parser & dispatcher
+  |     +-- router       Natural language intent router (Claude haiku)
+  |     +-- session      Conversation context management
+  |     +-- output       Colored output, prompts, welcome/help
+  +-- cli/             Command handlers & application state
   +-- coordination/    Event-driven coordination loop
   +-- decomposition/   Task decomposition (Sequential / Parallel / Hybrid)
   +-- assignment/      Capability matching, RFP/bid, contract building
@@ -103,52 +126,43 @@ panopticon-ai (single crate)
 | `verification` | 4 verifiers (Direct Inspection, Third-Party Audit, Cryptographic stub, Game-Theoretic), ed25519 credentials, dispute state machine |
 | `security` | Sybil / Collusion / Behavioral threat detectors, circuit breaker with token revocation |
 | `permissions` | Criticality x reversibility approval matrix (Standing / Contextual / JIT), privilege attenuation for re-delegation chains |
-| `cli` | CLI interface for tasks, agents, reputation, and state transitions |
+| `repl` | Interactive REPL loop, slash command dispatch, natural language intent routing via Claude, session context |
+| `cli` | Command handlers and application state |
 
 ## Requirements
 
 - Rust 1.85+ (Edition 2024)
 
-## CLI Usage
+## Usage
 
 ```bash
-# Binary name
-panopticon <command>
+# Launch the REPL
+panopticon
 
 # Or via cargo
-cargo run -- <command>
+cargo run
 ```
 
-### Commands
+All interaction happens inside the REPL. See the [Slash commands](#slash-commands) table above for available commands.
 
-| Command | Description |
-|---|---|
-| `demo` | Run a full delegation lifecycle demo |
-| `task create` | Create a task with characteristics |
-| `task list` | List all tasks |
-| `task get <ID>` | Get task details |
-| `task transition <ID> <EVENT>` | Apply a state transition event |
-| `task decompose <ID> --strategy <NAME>` | Decompose a task (sequential, parallel, hybrid) |
-| `agent register <NAME>` | Register an agent |
-| `agent list` | List all agents |
-| `agent get <ID>` | Get agent details |
-| `agent reputation <ID>` | Get reputation score and trust level |
+### Configuration
 
-### Examples
+Configuration is stored in `~/.panopticon/config.toml` (or `$PANOPTICON_STATE_DIR/config.toml`).
+
+| Key | Default | Description |
+|---|---|---|
+| `default_model` | `sonnet` | Claude model for plan/execute |
+| `router_model` | `haiku` | Claude model for natural language intent routing |
+| `max_context_messages` | `20` | Number of conversation messages retained in session |
+| `max_turns` | `10` | Max turns per Claude agent execution |
+| `permission_mode` | `bypassPermissions` | Permission mode for Claude CLI |
+| `min_reputation_threshold` | `0.3` | Minimum reputation for agent assignment |
+| `decomposition_strategy` | `hybrid` | Default decomposition strategy |
 
 ```bash
-# Run the demo (recommended first step)
-panopticon demo
-
-# Create a task
-panopticon task create "Analyze data" "Process market data" \
-  --complexity 0.7 --criticality 0.6
-
-# Register an agent with capabilities
-panopticon agent register analyst --capabilities "data_analysis,market_research"
-
-# Decompose a task
-panopticon task decompose <TASK_ID> --strategy hybrid
+# Inside the REPL:
+> /config init   # Create default config
+> /config show   # View current config
 ```
 
 ## Task State Machine

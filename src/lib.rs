@@ -1,11 +1,15 @@
 pub mod assignment;
 pub mod cli;
+pub mod config;
 pub mod coordination;
 pub mod decomposition;
+pub mod executor;
 pub mod ledger;
 pub mod monitoring;
 pub mod optimizer;
 pub mod permissions;
+pub mod persistence;
+pub mod repl;
 pub mod reputation;
 pub mod security;
 pub mod types;
